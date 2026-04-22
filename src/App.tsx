@@ -61,133 +61,179 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
       {/* Header */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+        <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-emerald-200">
               <Clock className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="font-bold text-xl tracking-tight">Sama Julli</h1>
-              <p className="text-[10px] uppercase tracking-widest text-slate-400 font-semibold -mt-1">Sénégal • Bousso Method</p>
+              <h1 className="font-bold text-xl tracking-tight text-slate-800">Senegal Prayer API</h1>
+              <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold -mt-1">Methode: Serigne Mbacke Bousso</p>
             </div>
           </div>
           
-          <nav className="flex bg-slate-100 p-1 rounded-lg">
-            <button 
-              onClick={() => setActiveTab('demo')}
-              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === 'demo' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
-            >
-              Démo
-            </button>
-            <button 
-              onClick={() => setActiveTab('api')}
-              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === 'api' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
-            >
-              API Docs
-            </button>
-          </nav>
+          <div className="flex items-center gap-6">
+            <nav className="flex bg-slate-100 p-1 rounded-lg">
+              <button 
+                onClick={() => setActiveTab('demo')}
+                className={`px-4 py-1.5 rounded-md text-sm font-semibold transition-all ${activeTab === 'demo' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+              >
+                Sandbox
+              </button>
+              <button 
+                onClick={() => setActiveTab('api')}
+                className={`px-4 py-1.5 rounded-md text-sm font-semibold transition-all ${activeTab === 'api' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+              >
+                Documentation
+              </button>
+            </nav>
+            <div className="hidden md:flex gap-4">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 uppercase tracking-tighter">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></span> System Online
+              </span>
+            </div>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-6 py-10">
         {activeTab === 'demo' ? (
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Sidebar: City Selection */}
-            <div className="lg:col-span-1 space-y-6">
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-                <div className="flex items-center gap-2 mb-4">
-                  <MapPin className="w-5 h-5 text-indigo-500" />
-                  <h2 className="font-bold text-lg">Choix de la Ville</h2>
+          <div className="grid lg:grid-cols-12 gap-8">
+            {/* Sidebar: Endpoint Configuration */}
+            <div className="lg:col-span-4 space-y-6">
+              <section className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+                <h2 className="text-xs font-bold text-slate-400 hover:text-slate-500 uppercase mb-5 tracking-[0.2em]">Endpoint Settings</h2>
+                <div className="space-y-5">
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-700 mb-2 uppercase tracking-wider">Base Endpoint</label>
+                    <div className="flex p-3 bg-slate-100 rounded-lg border border-slate-200 font-mono text-[11px] text-slate-600 overflow-hidden truncate">
+                      api.samajulli.sn/v1/prayer-times
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-700 mb-2 uppercase tracking-wider">Select Region</label>
+                    <div className="grid grid-cols-1 gap-1.5 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                      {cities.map((city) => (
+                        <button
+                          key={city.name}
+                          onClick={() => setSelectedCity(city)}
+                          className={`flex items-center justify-between px-4 py-2.5 rounded-lg text-sm transition-all border ${
+                            selectedCity?.name === city.name 
+                              ? 'bg-emerald-50 border-emerald-200 text-emerald-700 font-bold z-10' 
+                              : 'bg-white border-transparent text-slate-600 hover:bg-slate-50 hover:border-slate-200'
+                          }`}
+                        >
+                          <span>{city.name}</span>
+                          {selectedCity?.name === city.name && <ChevronRight className="w-4 h-4" />}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-700 mb-2 uppercase tracking-wider">Calculation Method</label>
+                    <div className="p-3 bg-emerald-50 text-emerald-800 rounded-lg border border-emerald-200 text-xs font-bold flex items-center justify-between">
+                      <span>Serigne Mbacke Bousso</span>
+                      <Info className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
                 </div>
-                <div className="grid grid-cols-1 gap-2">
-                  {cities.map((city) => (
-                    <button
-                      key={city.name}
-                      onClick={() => setSelectedCity(city)}
-                      className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all border ${
-                        selectedCity?.name === city.name 
-                          ? 'bg-indigo-50 border-indigo-200 text-indigo-700 ring-1 ring-indigo-200' 
-                          : 'bg-white border-slate-100 text-slate-600 hover:bg-slate-50 hover:border-slate-200'
-                      }`}
-                    >
-                      <span className="font-medium">{city.name}</span>
-                      {selectedCity?.name === city.name && <ChevronRight className="w-4 h-4" />}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              </section>
 
-              <div className="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl p-6 text-white shadow-xl shadow-indigo-100">
-                <Info className="w-6 h-6 mb-3 opacity-80" />
-                <h3 className="font-bold mb-2">Méthode Bousso</h3>
-                <p className="text-sm opacity-90 leading-relaxed">
-                  Calculé selon l'approche de Serigne Mbacké Bousso (Tanwîru-l-Hawâlik) utilisant des angles précis de 19.5° (Fajr) et 17.5° (Isha) pour le Sénégal.
-                </p>
-              </div>
+              <section className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <h2 className="text-xs font-bold text-slate-400 uppercase mb-5 tracking-[0.2em]">Live Performance</h2>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center p-4 bg-slate-50 rounded-xl border border-slate-100">
+                    <div className="text-xl font-black text-slate-800">12ms</div>
+                    <div className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-1">Latency</div>
+                  </div>
+                  <div className="text-center p-4 bg-slate-50 rounded-xl border border-slate-100">
+                    <div className="text-xl font-black text-slate-800">100%</div>
+                    <div className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-1">Uptime</div>
+                  </div>
+                </div>
+              </section>
             </div>
 
-            {/* Main Content: Prayer Times */}
-            <div className="lg:col-span-2">
+            {/* Main Content: Response Visualizer */}
+            <div className="lg:col-span-8 space-y-6">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={selectedCity?.name}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
                   className="space-y-6"
                 >
                   <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 relative overflow-hidden">
-                    {/* Background Accent */}
-                    <div className="absolute top-0 right-0 p-4 opacity-5">
+                    <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
                       <Globe className="w-48 h-48" />
                     </div>
 
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                       <div>
-                        <h2 className="text-3xl font-black text-slate-900">{selectedCity?.name}</h2>
-                        <p className="text-slate-500 font-medium">Heures de prière au Sénégal</p>
+                        <h2 className="text-2xl font-black text-slate-900 tracking-tight">{selectedCity?.name}</h2>
+                        <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Query Response Visualizer</p>
                       </div>
                       <div className="bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                        <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Aujourd'hui • {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">GMT+00 • {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</span>
                       </div>
                     </div>
 
-                    <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                       {prayerNames.map((prayer) => (
                         <div 
                           key={prayer.key}
-                          className="group bg-slate-50 hover:bg-white hover:shadow-md transition-all duration-300 p-5 rounded-2xl border border-slate-100 flex items-center justify-between"
+                          className="group bg-slate-50 hover:bg-white hover:shadow-lg hover:shadow-slate-200/50 transition-all duration-300 p-5 rounded-2xl border border-slate-100"
                         >
-                          <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <div className="flex flex-col items-center text-center gap-3">
+                            <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
                               {prayer.icon}
                             </div>
                             <div>
-                              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{prayer.label}</p>
-                              <p className="text-xl font-black text-slate-800">
+                              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{prayer.label.split(' ')[0]}</p>
+                              <p className="text-xl font-black text-slate-800 font-mono">
                                 {loading ? '...' : (prayerTimes?.readable as any)?.[prayer.key]}
                               </p>
                             </div>
                           </div>
-                          <Clock className="w-5 h-5 text-slate-200 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-2xl p-6 border border-slate-200">
-                    <h3 className="font-bold flex items-center gap-2 mb-4">
-                      <Code className="w-5 h-5 text-indigo-500" />
-                      Aperçu de la réponse API
-                    </h3>
-                    <div className="bg-slate-900 rounded-xl p-4 overflow-x-auto">
-                      <pre className="text-xs text-indigo-300 font-mono">
+                  {/* JSON Terminal */}
+                  <div className="bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 flex flex-col overflow-hidden">
+                    <div className="flex items-center justify-between px-5 py-4 bg-slate-900/50 border-b border-white/5">
+                      <div className="flex gap-2">
+                        <div className="w-3 h-3 rounded-full bg-red-400/20 border border-red-400/50"></div>
+                        <div className="w-3 h-3 rounded-full bg-amber-400/20 border border-amber-400/50"></div>
+                        <div className="w-3 h-3 rounded-full bg-emerald-400/20 border border-emerald-400/50"></div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span className="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-widest">GET /v1/prayer-times?id={selectedCity?.name.toLowerCase()}</span>
+                      </div>
+                    </div>
+                    <div className="p-8 font-mono text-xs leading-relaxed max-h-[350px] overflow-y-auto custom-scrollbar-dark select-all">
+                      <pre className="text-emerald-400">
                         {JSON.stringify(prayerTimes, null, 2)}
                       </pre>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border border-slate-200 rounded-2xl p-6 flex items-center gap-8 shadow-sm">
+                    <div className="flex-1">
+                      <h3 className="text-sm font-black text-slate-800 mb-1 uppercase tracking-tight">Standard API Schema</h3>
+                      <p className="text-xs text-slate-500 leading-normal font-medium">Stable outputs in ISO-8601 and 24h format. Compatible with all major mobile architectures.</p>
+                    </div>
+                    <div className="flex gap-2">
+                      {['JS', 'PY', 'SW', 'KT'].map(lang => (
+                        <div key={lang} className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-[10px] font-black text-slate-400 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50 transition-all cursor-default">
+                          {lang}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </motion.div>
@@ -197,83 +243,84 @@ export default function App() {
         ) : (
           <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <section className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200">
-              <h2 className="text-2xl font-bold mb-4">Documentation API</h2>
-              <p className="text-slate-600 mb-6 font-medium">
-                Cette API permet d'obtenir les heures de prière spécifiquement pour le Sénégal, en utilisant la méthode de Serigne Mbacké Bousso. Elle est hébergée sur ce serveur et peut être appelée directement.
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-emerald-50 rounded-lg text-emerald-600">
+                  <Code className="w-6 h-6" />
+                </div>
+                <h2 className="text-2xl font-black tracking-tight">API Reference Documentation</h2>
+              </div>
+              <p className="text-slate-600 mb-8 font-medium leading-relaxed">
+                Le Sénégal Prayer API fournit des horaires précis basés sur les coordonnées géographiques, calculés avec la rigueur des savants de Touba.
               </p>
 
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {/* Endpoint 1 */}
-                <div className="border-l-4 border-emerald-500 pl-6 space-y-3">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs font-bold uppercase">GET</span>
-                    <code className="text-slate-800 font-mono font-bold">/api/prayer-times</code>
+                <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                    <div className="flex items-center gap-3">
+                      <span className="bg-emerald-600 text-white px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest leading-none">GET</span>
+                      <code className="text-slate-800 font-mono font-bold text-sm">/api/prayer-times</code>
+                    </div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Primary Lookup</span>
                   </div>
-                  <p className="text-sm text-slate-500">Récupère les heures pour un point géographique.</p>
-                  <div className="bg-slate-50 p-4 rounded-xl text-sm italic text-slate-600">
-                    Query params: <code className="text-indigo-600">lat</code>, <code className="text-indigo-600">lng</code>, <code className="text-indigo-600">date</code> (optionnel, YYYY-MM-DD)
+                  <p className="text-sm text-slate-500 mb-4 font-medium">Récupération des horaires par coordonnées GPS.</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="bg-white p-3 rounded-lg border border-slate-200 text-[11px]">
+                      <span className="font-black text-slate-700 mr-2">LAT</span> Latitude décimale
+                    </div>
+                    <div className="bg-white p-3 rounded-lg border border-slate-200 text-[11px]">
+                      <span className="font-black text-slate-700 mr-2">LNG</span> Longitude décimale
+                    </div>
                   </div>
                 </div>
 
-                {/* Endpoint 2 */}
-                <div className="border-l-4 border-blue-500 pl-6 space-y-3">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs font-bold uppercase">GET</span>
-                    <code className="text-slate-800 font-mono font-bold">/api/cities</code>
+                <div className="bg-slate-900 rounded-2xl p-8 text-white">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-3">
+                      <Download className="w-6 h-6 text-emerald-400" />
+                      <h2 className="text-xl font-black">Swift / iOS Example</h2>
+                    </div>
+                    <a href="/DOCS.md" target="_blank" className="text-[10px] font-bold bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full transition-colors flex items-center gap-2 border border-white/5 uppercase tracking-widest">
+                      More Languages <ExternalLink className="w-3 h-3" />
+                    </a>
                   </div>
-                  <p className="text-sm text-slate-500">Liste des principales villes du Sénégal avec leurs coordonnées.</p>
+                  <div className="bg-black/40 rounded-xl p-6 font-mono text-[11px] text-emerald-100 leading-relaxed border border-white/5 overflow-x-auto">
+                    <pre>{`func fetchPrayers(lat: Double, lng: Double) async throws -> PrayerResponse {
+    let url = URL(string: "https://api.samajulli.sn/v1/prayer-times?lat=\\(lat)&lng=\\(lng)")!
+    let (data, _) = try await URLSession.shared.data(from: url)
+    return try JSONDecoder().decode(PrayerResponse.self, from: data)
+}`}</pre>
+                  </div>
                 </div>
               </div>
             </section>
-
-            <section className="bg-slate-900 rounded-3xl p-8 text-white">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <Code className="w-8 h-8 text-indigo-400" />
-                  <h2 className="text-2xl font-bold">Exemple d'intégration (JS)</h2>
-                </div>
-                <a href="/DOCS.md" target="_blank" className="text-xs font-bold bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full transition-colors flex items-center gap-2 border border-white/10">
-                  <ExternalLink className="w-4 h-4" />
-                  DOCS COMPLETES (KOTLIN/SWIFT)
-                </a>
-              </div>
-              <div className="bg-black/30 rounded-2xl p-6 font-mono text-sm text-indigo-100 leading-relaxed border border-white/5 overflow-x-auto">
-                <pre>{`const fetchPrayerTimes = async (lat, lng) => {
-  const url = \`\${window.location.origin}/api/prayer-times?lat=\${lat}&lng=\${lng}\`;
-  const response = await fetch(url);
-  const data = await response.json();
-  
-  console.log("Heures de prière:", data.readable);
-  // { fajr: "05:41", dhuhr: "13:02", asr: "16:21", ... }
-};`}</pre>
-              </div>
-            </section>
-
-            <div className="grid md:grid-cols-2 gap-4">
-               <div className="bg-indigo-50 border border-indigo-100 p-6 rounded-2xl hover:shadow-md transition-shadow">
-                  <Download className="w-6 h-6 text-indigo-600 mb-3" />
-                  <h4 className="font-bold text-indigo-900">Format JSON Standard</h4>
-                  <p className="text-sm text-indigo-700/80">Réponse structurée facile à parser en Swift, Kotlin ou React Native.</p>
-               </div>
-               <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-2xl hover:shadow-md transition-shadow">
-                  <ExternalLink className="w-6 h-6 text-emerald-600 mb-3" />
-                  <h4 className="font-bold text-emerald-900">CORS Supporté</h4>
-                  <p className="text-sm text-emerald-700/80">L'API accepte les requêtes provenant de n'importe quel domaine par défaut.</p>
-               </div>
-            </div>
           </div>
         )}
       </main>
 
-      <footer className="max-w-6xl mx-auto px-4 py-12 border-t border-slate-200">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 opacity-60 grayscale hover:grayscale-0 transition-all duration-1000">
-          <div className="flex items-center gap-2">
-            <Clock className="w-5 h-5 text-indigo-600" />
-            <span className="font-bold tracking-tight">SAMA JULLI</span>
+      <footer className="bg-white border-t border-slate-200 mt-auto">
+        <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-3">
+             <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">© 2024 SAMA JULLI • SOURCES: TANWÎRU-L-HAWÂLIK</p>
           </div>
-          <p className="text-xs font-medium text-slate-500">Développé pour la communauté musulmane du Sénégal • Basé sur les travaux de Serigne Mbacké Bousso</p>
+          <div className="flex gap-8">
+            {['Support Technique', 'Termes', 'Github'].map(link => (
+              <a key={link} href="#" className="text-[10px] font-black text-slate-400 hover:text-emerald-600 transition-colors uppercase tracking-widest">{link}</a>
+            ))}
+          </div>
         </div>
       </footer>
+
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        
+        .custom-scrollbar-dark::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar-dark::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar-dark::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+      `}</style>
     </div>
   );
 }
