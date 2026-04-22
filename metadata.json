@@ -1,0 +1,11 @@
+{
+  "name": "Sama Julli - Senegal Prayer Times API",
+  "description": "API complète d'heures de prière au Sénégal basée sur la méthode Serigne Mbacké Bousso. Inclut une démo interactive et une documentation technique pour l'intégration mobile (Android, iOS, React Native).",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "API",
+    "Calculations"
+  ]
+}

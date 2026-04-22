@@ -1,11 +1,63 @@
-<div align="center">
+# Sama Julli - API Heures de Prière Sénégal (Méthode Serigne Mbacké Bousso)
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+Cette application est une API spécialisée pour le calcul des heures de prière au Sénégal, suivant rigoureusement la méthode de **Serigne Mbacké Bousso**. Elle est conçue pour être intégrée facilement dans des applications mobiles ou web.
 
-  <h1>Built with AI Studio</h2>
+## Méthode de Calcul
+Le moteur utilise la bibliothèque `adhan` avec les paramètres spécifiques "Bousso" :
+- **Fajr** : 19.5°
+- **Isha** : 17.5°
+- **Asr** : Madhab Maliki (Ratio d'ombre 1x)
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+## Points de Terminaison (Endpoints)
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+### 1. Liste des villes
+`GET /api/cities`
+Renvoie une liste des principales villes du Sénégal avec leurs coordonnées géographiques.
 
-</div>
+### 2. Heures de prière
+`GET /api/prayer-times?lat={latitude}&lng={longitude}&date={YYYY-MM-DD}`
+
+**Paramètres :**
+- `lat` (Requis) : Latitude (ex: 14.7167)
+- `lng` (Requis) : Longitude (ex: -17.4677)
+- `date` (Optionnel) : Date précise. Par défaut, utilise la date du jour du serveur.
+
+**Exemple de réponse :**
+```json
+{
+  "fajr": "2026-04-22T05:42:00.000Z",
+  "readable": {
+    "fajr": "05:42",
+    "dhuhr": "13:01",
+    "asr": "16:25",
+    "maghrib": "19:15",
+    "isha": "20:25"
+  },
+  "metadata": {
+    "method": "Serigne Mbacke Bousso",
+    "angles": { "fajr": 19.5, "isha": 17.5 }
+  }
+}
+```
+
+## Intégration Mobile
+
+### JavaScript (fetch)
+```javascript
+const response = await fetch('https://[URL_APP]/api/prayer-times?lat=14.71&lng=-17.46');
+const data = await response.json();
+console.log(data.readable.fajr);
+```
+
+### cURL
+```bash
+curl "https://[URL_APP]/api/prayer-times?lat=14.71&lng=-17.46"
+```
+
+## Développement
+- **Frontend** : React + Tailwind CSS
+- **Backend** : Node.js + Express
+- **Calculs** : Adhan JS
+
+---
+*Développé pour la communauté musulmane du Sénégal.*
