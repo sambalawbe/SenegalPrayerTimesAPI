@@ -14,6 +14,12 @@ params.ishaAngle = 17.5;
 params.madhab = adhan.Madhab.Shafi; // Utilise le ratio d'ombre 1x, identique au Maliki
 ```
 
+### Heures de prière par nom de ville
+`GET /api/prayer-times/city/:cityName`
+Permet de récupérer les horaires sans connaître les coordonnées. L'API fait correspondre le nom (insensible à la casse).
+
+**Exemple :** `https://[URL_APP]/api/prayer-times/city/darou-salam-diass`
+
 ## Structure des Données
 
 ### Ville (City)

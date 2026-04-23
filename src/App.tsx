@@ -274,6 +274,18 @@ export default function App() {
                   </div>
                 </div>
 
+                {/* Endpoint 2 */}
+                <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                    <div className="flex items-center gap-3">
+                      <span className="bg-blue-600 text-white px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest leading-none">GET</span>
+                      <code className="text-slate-800 font-mono font-bold text-sm">/api/prayer-times/city/:cityName</code>
+                    </div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">City Lookup</span>
+                  </div>
+                  <p className="text-sm text-slate-500 mb-4 font-medium">Récupération simplifiée par nom de ville (ex: /api/prayer-times/city/touba).</p>
+                </div>
+
                 <div className="bg-slate-900 rounded-2xl p-8 text-white">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-3">

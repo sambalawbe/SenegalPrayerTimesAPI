@@ -1,4 +1,4 @@
-# Waxtu Julli - API Heures de Prière Sénégal (Méthode Serigne Mbacké Bousso)
+# Sama Julli - API Heures de Prière Sénégal (Méthode Serigne Mbacké Bousso)
 
 Cette application est une API spécialisée pour le calcul des heures de prière au Sénégal, suivant rigoureusement la méthode de **Serigne Mbacké Bousso**. Elle est conçue pour être intégrée facilement dans des applications mobiles ou web.
 
@@ -14,13 +14,20 @@ Le moteur utilise la bibliothèque `adhan` avec les paramètres spécifiques "Bo
 `GET /api/cities`
 Renvoie une liste des principales villes du Sénégal avec leurs coordonnées géographiques.
 
-### 2. Heures de prière
+### 2. Heures de prière par coordonnées
 `GET /api/prayer-times?lat={latitude}&lng={longitude}&date={YYYY-MM-DD}`
 
 **Paramètres :**
 - `lat` (Requis) : Latitude (ex: 14.7167)
 - `lng` (Requis) : Longitude (ex: -17.4677)
 - `date` (Optionnel) : Date précise. Par défaut, utilise la date du jour du serveur.
+
+### 3. Heures de prière par ville
+`GET /api/prayer-times/city/{cityName}`
+
+**Exemples :**
+- `/api/prayer-times/city/touba`
+- `/api/prayer-times/city/darou-salam-diass`
 
 **Exemple de réponse :**
 ```json
