@@ -92,7 +92,7 @@ export default function App() {
 
   const prayerNames = [
     { key: 'fajr', label: 'Fajar', subLabel: 'Fajr', icon: <Sun className="w-5 h-5 text-amber-500" /> },
-    { key: 'sunrise', label: 'Fenq', subLabel: 'Sunrise', icon: <Sun className="w-5 h-5 text-orange-400" /> },
+    { key: 'sunrise', label: 'Fenk', subLabel: 'Sunrise', icon: <Sun className="w-5 h-5 text-orange-400" /> },
     { key: 'dhuhr', label: 'Tisbaar', subLabel: 'Dhuhr', icon: <Sun className="w-5 h-5 text-yellow-500" /> },
     { key: 'asr', label: 'Tàkkusaan', subLabel: 'Asr', icon: <Sun className="w-5 h-5 text-orange-500" /> },
     { key: 'maghrib', label: 'Timis', subLabel: 'Maghrib', icon: <Moon className="w-5 h-5 text-indigo-400" /> },
