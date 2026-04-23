@@ -145,7 +145,7 @@ export default function App() {
         </div>
 
         {/* Middle Section: Next Prayer Countdown */}
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center py-10">
+        <div className="relative z-10 flex-[2] flex flex-col items-center justify-center py-4">
           <AnimatePresence mode="wait">
             {nextPrayer && (
               <motion.div 
@@ -154,8 +154,8 @@ export default function App() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-center"
               >
-                <p className="text-2xl font-black text-emerald-400 uppercase tracking-[0.5em] mb-6">Prochaine Prière : {nextPrayer.label}</p>
-                <div className="text-[12rem] font-black tabular-nums tracking-[-0.05em] leading-none drop-shadow-2xl">
+                <p className="text-xl md:text-2xl font-black text-emerald-400 uppercase tracking-[0.4em] mb-4 opacity-90">Prochaine Prière : {nextPrayer.label}</p>
+                <div className="text-[14vw] md:text-[10rem] font-black tabular-nums tracking-[-0.05em] leading-none drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
                   {nextPrayer.countdown}
                 </div>
               </motion.div>
@@ -164,32 +164,32 @@ export default function App() {
         </div>
 
         {/* Bottom Section: Prayer List */}
-        <div className="relative z-10 px-12 pb-16">
-          <div className="grid grid-cols-6 gap-6">
+        <div className="relative z-10 px-8 pb-10">
+          <div className="grid grid-cols-6 gap-4">
             {prayerNames.map((prayer) => {
               const isNext = nextPrayer?.key === prayer.key;
               return (
                 <div 
                   key={prayer.key}
-                  className={`relative p-8 rounded-[2rem] border transition-all duration-500 flex flex-col items-center text-center gap-4 ${
+                  className={`relative p-5 md:p-6 rounded-[1.5rem] border transition-all duration-500 flex flex-col items-center text-center gap-3 ${
                     isNext 
-                      ? 'bg-emerald-600 border-emerald-400 shadow-2xl shadow-emerald-900 shadow-[0_0_80px_rgba(16,185,129,0.3)] scale-110' 
-                      : 'bg-white/5 border-white/10'
+                      ? 'bg-emerald-600 border-emerald-400 shadow-2xl scale-105 z-20' 
+                      : 'bg-white/5 border-white/10 opacity-80'
                   }`}
                 >
-                  <div className={`p-4 rounded-2xl shadow-sm ${isNext ? 'bg-white/20' : 'bg-white/10'}`}>
+                  <div className={`p-3 rounded-xl ${isNext ? 'bg-white/20' : 'bg-white/10'}`}>
                     {prayer.icon}
                   </div>
                   <div>
-                    <p className={`text-sm font-black uppercase tracking-widest mb-1 ${isNext ? 'text-white' : 'text-slate-400'}`}>
+                    <p className={`text-[10px] font-black uppercase tracking-widest mb-1 ${isNext ? 'text-white/80' : 'text-slate-400'}`}>
                       {prayer.subLabel}
                     </p>
-                    <p className={`text-4xl font-black ${isNext ? 'text-white' : 'text-slate-200'}`}>
+                    <p className={`text-2xl md:text-3xl font-black ${isNext ? 'text-white' : 'text-slate-200'}`}>
                       {(prayerTimes?.readable as any)?.[prayer.key]}
                     </p>
                   </div>
                   {isNext && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white text-emerald-600 px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest animate-bounce">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white text-emerald-600 px-3 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg">
                       En Cours
                     </div>
                   )}
