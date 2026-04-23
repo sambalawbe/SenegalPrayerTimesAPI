@@ -67,4 +67,4 @@ curl "https://[URL_APP]/api/prayer-times?lat=14.71&lng=-17.46"
 - **Calculs** : Adhan JS
 
 ---
-*Développé pour la sambaLabeLO.*
+*Développé pour la sambaLawbeLO.*
