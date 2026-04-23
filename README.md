@@ -1,4 +1,4 @@
-# Sama Julli - API Heures de Prière Sénégal (Méthode Serigne Mbacké Bousso)
+# Waxtu Julli - API Heures de Prière Sénégal (Méthode Serigne Mbacké Bousso)
 
 Cette application est une API spécialisée pour le calcul des heures de prière au Sénégal, suivant rigoureusement la méthode de **Serigne Mbacké Bousso**. Elle est conçue pour être intégrée facilement dans des applications mobiles ou web.
 
