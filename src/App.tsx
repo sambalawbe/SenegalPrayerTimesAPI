@@ -27,12 +27,18 @@ interface PrayerTimes {
   };
 }
 
+interface Weather {
+  temp: number;
+  code: number;
+}
+
 export default function App() {
   const [selectedCity, setSelectedCity] = useState<City | null>(null);
   const [prayerTimes, setPrayerTimes] = useState<PrayerTimes | null>(null);
   const [activeTab, setActiveTab] = useState<'demo' | 'api' | 'tv'>('demo');
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [weather, setWeather] = useState<Weather | null>(null);
 
   useEffect(() => {
     const handleOnline = () => setIsOffline(false);
@@ -68,16 +74,29 @@ export default function App() {
       const data = calculatePrayerTimes(selectedCity.lat, selectedCity.lng) as any;
       setPrayerTimes(data);
       localStorage.setItem('selectedCity', JSON.stringify(selectedCity));
+
+      // Fetch Weather (Open-Meteo)
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${selectedCity.lat}&longitude=${selectedCity.lng}&current_weather=true`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.current_weather) {
+            setWeather({
+              temp: Math.round(data.current_weather.temperature),
+              code: data.current_weather.weathercode
+            });
+          }
+        })
+        .catch(() => setWeather(null));
     }
   }, [selectedCity]);
 
   const prayerNames = [
-    { key: 'fajr', label: 'Fajr', subLabel: 'Suba', icon: <Sun className="w-5 h-5 text-amber-500" /> },
-    { key: 'sunrise', label: 'Sunrise', subLabel: 'Fidjar', icon: <Sun className="w-5 h-5 text-orange-400" /> },
-    { key: 'dhuhr', label: 'Dhuhr', subLabel: 'Tisbaar', icon: <Sun className="w-5 h-5 text-yellow-500" /> },
-    { key: 'asr', label: 'Asr', subLabel: 'Takussan', icon: <Sun className="w-5 h-5 text-orange-500" /> },
-    { key: 'maghrib', label: 'Maghrib', subLabel: 'Timis', icon: <Moon className="w-5 h-5 text-indigo-400" /> },
-    { key: 'isha', label: 'Isha', subLabel: 'Gué', icon: <Moon className="w-5 h-5 text-indigo-600" /> },
+    { key: 'fajr', label: 'Fajar', subLabel: 'Fajr', icon: <Sun className="w-5 h-5 text-amber-500" /> },
+    { key: 'sunrise', label: 'Fenq', subLabel: 'Sunrise', icon: <Sun className="w-5 h-5 text-orange-400" /> },
+    { key: 'dhuhr', label: 'Tisbaar', subLabel: 'Dhuhr', icon: <Sun className="w-5 h-5 text-yellow-500" /> },
+    { key: 'asr', label: 'Tàkkusaan', subLabel: 'Asr', icon: <Sun className="w-5 h-5 text-orange-500" /> },
+    { key: 'maghrib', label: 'Timis', subLabel: 'Maghrib', icon: <Moon className="w-5 h-5 text-indigo-400" /> },
+    { key: 'isha', label: 'Gee', subLabel: 'Isha', icon: <Moon className="w-5 h-5 text-indigo-600" /> },
   ];
 
   const nextPrayer = useMemo(() => {
@@ -124,28 +143,36 @@ export default function App() {
         </div>
 
         {/* Top Header TV */}
-        <div className="relative z-10 px-12 py-10 flex justify-between items-start">
+        <div className="relative z-10 px-12 py-6 flex justify-between items-start">
           <div className="flex items-center gap-6">
-            <div className="w-20 h-20 bg-emerald-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-emerald-900/50">
-              <Clock className="w-12 h-12" />
+            <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-emerald-900/50">
+              <Clock className="w-10 h-10" />
             </div>
             <div>
-              <h1 className="text-4xl font-black tracking-tighter uppercase">{selectedCity?.name}</h1>
-              <p className="text-xl font-bold text-emerald-500 uppercase tracking-widest mt-1 opacity-80">Sénégal • Bousso Method</p>
+              <h1 className="text-3xl font-black tracking-tighter uppercase">{selectedCity?.name}</h1>
+              <p className="text-lg font-bold text-emerald-500 uppercase tracking-widest mt-0.5 opacity-80">Sénégal • Bousso Method</p>
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-7xl font-black tabular-nums tracking-tighter">
-              {format(currentTime, 'HH:mm:ss')}
+          <div className="flex flex-col items-end">
+            <div className="flex items-center gap-6 mb-1">
+              {weather && (
+                <div className="flex items-center gap-2 px-4 py-1.5 bg-white/5 rounded-full border border-white/10">
+                  <Sun className="w-5 h-5 text-yellow-400" />
+                  <span className="text-2xl font-black tabular-nums">{weather.temp}°C</span>
+                </div>
+              )}
+              <div className="text-6xl font-black tabular-nums tracking-tighter">
+                {format(currentTime, 'HH:mm:ss')}
+              </div>
             </div>
-            <div className="text-2xl font-bold text-slate-400 uppercase tracking-widest mt-2">
+            <div className="text-xl font-bold text-slate-400 uppercase tracking-widest">
               {format(currentTime, 'EEEE dd MMMM yyyy', { locale: fr })}
             </div>
           </div>
         </div>
 
         {/* Middle Section: Next Prayer Countdown */}
-        <div className="relative z-10 flex-[2] flex flex-col items-center justify-center py-4">
+        <div className="relative z-10 flex-[1.5] flex flex-col items-center justify-center p-0">
           <AnimatePresence mode="wait">
             {nextPrayer && (
               <motion.div 
@@ -154,8 +181,12 @@ export default function App() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-center"
               >
-                <p className="text-xl md:text-2xl font-black text-emerald-400 uppercase tracking-[0.4em] mb-4 opacity-90">Prochaine Prière : {nextPrayer.label}</p>
-                <div className="text-[14vw] md:text-[10rem] font-black tabular-nums tracking-[-0.05em] leading-none drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                <div className="flex items-center justify-center gap-6 mb-2">
+                  <div className="h-px bg-emerald-500/30 w-24"></div>
+                  <p className="text-lg md:text-xl font-black text-emerald-400 uppercase tracking-[0.4em] opacity-90">PROCHAINE PRIÈRE : {nextPrayer.label}</p>
+                  <div className="h-px bg-emerald-500/30 w-24"></div>
+                </div>
+                <div className="text-[12vw] md:text-[9rem] font-black tabular-nums tracking-[-0.05em] leading-none drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
                   {nextPrayer.countdown}
                 </div>
               </motion.div>
@@ -164,35 +195,33 @@ export default function App() {
         </div>
 
         {/* Bottom Section: Prayer List */}
-        <div className="relative z-10 px-8 pb-10">
+        <div className="relative z-10 px-8 pb-12">
           <div className="grid grid-cols-6 gap-4">
             {prayerNames.map((prayer) => {
               const isNext = nextPrayer?.key === prayer.key;
               return (
                 <div 
                   key={prayer.key}
-                  className={`relative p-5 md:p-6 rounded-[1.5rem] border transition-all duration-500 flex flex-col items-center text-center gap-3 ${
+                  className={`relative p-4 md:p-5 rounded-[1.2rem] border transition-all duration-500 flex flex-col items-center text-center gap-2 ${
                     isNext 
-                      ? 'bg-emerald-600 border-emerald-400 shadow-2xl scale-105 z-20' 
-                      : 'bg-white/5 border-white/10 opacity-80'
+                      ? 'bg-emerald-600 border-emerald-300 shadow-2xl scale-105 z-20' 
+                      : 'bg-white/5 border-white/5 opacity-70'
                   }`}
                 >
-                  <div className={`p-3 rounded-xl ${isNext ? 'bg-white/20' : 'bg-white/10'}`}>
+                  <div className={`p-2.5 rounded-lg ${isNext ? 'bg-white/20' : 'bg-white/10'}`}>
                     {prayer.icon}
                   </div>
                   <div>
-                    <p className={`text-[10px] font-black uppercase tracking-widest mb-1 ${isNext ? 'text-white/80' : 'text-slate-400'}`}>
+                    <p className={`text-xs md:text-sm font-black uppercase tracking-widest mb-0.5 ${isNext ? 'text-white' : 'text-emerald-500'}`}>
+                      {prayer.label}
+                    </p>
+                    <p className={`text-[8px] md:text-[10px] font-bold uppercase tracking-widest mb-1 opacity-60 ${isNext ? 'text-white/70' : 'text-slate-500'}`}>
                       {prayer.subLabel}
                     </p>
                     <p className={`text-2xl md:text-3xl font-black ${isNext ? 'text-white' : 'text-slate-200'}`}>
                       {(prayerTimes?.readable as any)?.[prayer.key]}
                     </p>
                   </div>
-                  {isNext && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white text-emerald-600 px-3 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg">
-                      En Cours
-                    </div>
-                  )}
                 </div>
               );
             })}
@@ -351,7 +380,8 @@ export default function App() {
                               {prayer.icon}
                             </div>
                             <div>
-                              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{prayer.label.split(' ')[0]}</p>
+                              <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-0.5">{prayer.label}</p>
+                              <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-1">{prayer.subLabel}</p>
                               <p className="text-xl font-black text-slate-800 font-mono">
                                 {(prayerTimes?.readable as any)?.[prayer.key]}
                               </p>
