@@ -1,14 +1,18 @@
-import { useState, useEffect } from 'react';
-import { Clock, MapPin, Code, Download, ExternalLink, Moon, Sun, Info, ChevronRight, Globe } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Clock, MapPin, Code, Download, ExternalLink, Moon, Sun, Info, ChevronRight, Globe, Tv, X, Wifi, WifiOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-
-interface City {
-  name: string;
-  lat: number;
-  lng: number;
-}
+import { format, addSeconds, differenceInSeconds } from 'date-fns';
+import { fr } from 'date-fns/locale';
+import { SENEGAL_CITIES, City } from './lib/constants';
+import { calculatePrayerTimes } from './lib/prayerUtils';
 
 interface PrayerTimes {
+  fajr: string;
+  dhuhr: string;
+  asr: string;
+  maghrib: string;
+  isha: string;
+  sunrise: string;
   readable: {
     fajr: string;
     dhuhr: string;
@@ -24,41 +28,187 @@ interface PrayerTimes {
 }
 
 export default function App() {
-  const [cities, setCities] = useState<City[]>([]);
   const [selectedCity, setSelectedCity] = useState<City | null>(null);
   const [prayerTimes, setPrayerTimes] = useState<PrayerTimes | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'demo' | 'api'>('demo');
+  const [activeTab, setActiveTab] = useState<'demo' | 'api' | 'tv'>('demo');
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
   useEffect(() => {
-    fetch('/api/cities')
-      .then(res => res.json())
-      .then(data => {
-        setCities(data);
-        if (data.length > 0) setSelectedCity(data[0]);
-      });
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    
+    // Load city from localStorage
+    const savedCity = localStorage.getItem('selectedCity');
+    if (savedCity) {
+      try {
+        const city = JSON.parse(savedCity);
+        setSelectedCity(city);
+      } catch (e) {
+        setSelectedCity(SENEGAL_CITIES[0]);
+      }
+    } else {
+      setSelectedCity(SENEGAL_CITIES[0]);
+    }
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+      clearInterval(timer);
+    };
   }, []);
 
   useEffect(() => {
     if (selectedCity) {
-      setLoading(true);
-      fetch(`/api/prayer-times?lat=${selectedCity.lat}&lng=${selectedCity.lng}`)
-        .then(res => res.json())
-        .then(data => {
-          setPrayerTimes(data);
-          setLoading(false);
-        });
+      // Calculate locally (Instant & Offline support)
+      const data = calculatePrayerTimes(selectedCity.lat, selectedCity.lng) as any;
+      setPrayerTimes(data);
+      localStorage.setItem('selectedCity', JSON.stringify(selectedCity));
     }
   }, [selectedCity]);
 
   const prayerNames = [
-    { key: 'fajr', label: 'Fajr (Suba)', icon: <Sun className="w-5 h-5 text-amber-500" /> },
-    { key: 'sunrise', label: 'Sunrise (Fidjar)', icon: <Sun className="w-5 h-5 text-orange-400" /> },
-    { key: 'dhuhr', label: 'Dhuhr (Tisbaar)', icon: <Sun className="w-5 h-5 text-yellow-500" /> },
-    { key: 'asr', label: 'Asr (Takussan)', icon: <Sun className="w-5 h-5 text-orange-500" /> },
-    { key: 'maghrib', label: 'Maghrib (Timis)', icon: <Moon className="w-5 h-5 text-indigo-400" /> },
-    { key: 'isha', label: 'Isha (Gué)', icon: <Moon className="w-5 h-5 text-indigo-600" /> },
+    { key: 'fajr', label: 'Fajr', subLabel: 'Suba', icon: <Sun className="w-5 h-5 text-amber-500" /> },
+    { key: 'sunrise', label: 'Sunrise', subLabel: 'Fidjar', icon: <Sun className="w-5 h-5 text-orange-400" /> },
+    { key: 'dhuhr', label: 'Dhuhr', subLabel: 'Tisbaar', icon: <Sun className="w-5 h-5 text-yellow-500" /> },
+    { key: 'asr', label: 'Asr', subLabel: 'Takussan', icon: <Sun className="w-5 h-5 text-orange-500" /> },
+    { key: 'maghrib', label: 'Maghrib', subLabel: 'Timis', icon: <Moon className="w-5 h-5 text-indigo-400" /> },
+    { key: 'isha', label: 'Isha', subLabel: 'Gué', icon: <Moon className="w-5 h-5 text-indigo-600" /> },
   ];
+
+  const nextPrayer = useMemo(() => {
+    if (!prayerTimes) return null;
+    const now = currentTime;
+    const items = prayerNames.map(p => ({
+      ...p,
+      time: new Date((prayerTimes as any)[p.key])
+    }));
+
+    // Sort by time
+    const sorted = [...items].sort((a, b) => a.time.getTime() - b.time.getTime());
+    
+    // Find first prayer that is after now
+    let next = sorted.find(p => p.time > now);
+    
+    // If none found, next is Fajr tomorrow
+    if (!next) {
+        next = { ...sorted[0], time: addSeconds(sorted[0].time, 24 * 3600) };
+    }
+
+    const diff = differenceInSeconds(next.time, now);
+    const hours = Math.floor(diff / 3600);
+    const minutes = Math.floor((diff % 3600) / 60);
+    const seconds = diff % 60;
+
+    return {
+      ...next,
+      countdown: `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+    };
+  }, [prayerTimes, currentTime]);
+
+  if (activeTab === 'tv') {
+    return (
+      <div className="fixed inset-0 bg-slate-950 text-white z-[100] flex flex-col font-sans overflow-hidden">
+        {/* TV Background */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none">
+           <img 
+             src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=2070" 
+             className="w-full h-full object-cover grayscale" 
+             alt="Mosque background"
+           />
+           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950" />
+        </div>
+
+        {/* Top Header TV */}
+        <div className="relative z-10 px-12 py-10 flex justify-between items-start">
+          <div className="flex items-center gap-6">
+            <div className="w-20 h-20 bg-emerald-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-emerald-900/50">
+              <Clock className="w-12 h-12" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-black tracking-tighter uppercase">{selectedCity?.name}</h1>
+              <p className="text-xl font-bold text-emerald-500 uppercase tracking-widest mt-1 opacity-80">Sénégal • Bousso Method</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-7xl font-black tabular-nums tracking-tighter">
+              {format(currentTime, 'HH:mm:ss')}
+            </div>
+            <div className="text-2xl font-bold text-slate-400 uppercase tracking-widest mt-2">
+              {format(currentTime, 'EEEE dd MMMM yyyy', { locale: fr })}
+            </div>
+          </div>
+        </div>
+
+        {/* Middle Section: Next Prayer Countdown */}
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center py-10">
+          <AnimatePresence mode="wait">
+            {nextPrayer && (
+              <motion.div 
+                key={nextPrayer.key}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center"
+              >
+                <p className="text-2xl font-black text-emerald-400 uppercase tracking-[0.5em] mb-6">Prochaine Prière : {nextPrayer.label}</p>
+                <div className="text-[12rem] font-black tabular-nums tracking-[-0.05em] leading-none drop-shadow-2xl">
+                  {nextPrayer.countdown}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Bottom Section: Prayer List */}
+        <div className="relative z-10 px-12 pb-16">
+          <div className="grid grid-cols-6 gap-6">
+            {prayerNames.map((prayer) => {
+              const isNext = nextPrayer?.key === prayer.key;
+              return (
+                <div 
+                  key={prayer.key}
+                  className={`relative p-8 rounded-[2rem] border transition-all duration-500 flex flex-col items-center text-center gap-4 ${
+                    isNext 
+                      ? 'bg-emerald-600 border-emerald-400 shadow-2xl shadow-emerald-900 shadow-[0_0_80px_rgba(16,185,129,0.3)] scale-110' 
+                      : 'bg-white/5 border-white/10'
+                  }`}
+                >
+                  <div className={`p-4 rounded-2xl shadow-sm ${isNext ? 'bg-white/20' : 'bg-white/10'}`}>
+                    {prayer.icon}
+                  </div>
+                  <div>
+                    <p className={`text-sm font-black uppercase tracking-widest mb-1 ${isNext ? 'text-white' : 'text-slate-400'}`}>
+                      {prayer.subLabel}
+                    </p>
+                    <p className={`text-4xl font-black ${isNext ? 'text-white' : 'text-slate-200'}`}>
+                      {(prayerTimes?.readable as any)?.[prayer.key]}
+                    </p>
+                  </div>
+                  {isNext && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white text-emerald-600 px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest animate-bounce">
+                      En Cours
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Exit TV Mode Button */}
+        <button 
+          onClick={() => setActiveTab('demo')}
+          className="absolute bottom-8 right-8 w-14 h-14 bg-white/10 hover:bg-white text-white hover:text-slate-900 rounded-full flex items-center justify-center transition-all border border-white/10 shadow-lg group z-50"
+        >
+          <X className="w-8 h-8" />
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
@@ -91,8 +241,16 @@ export default function App() {
               </button>
             </nav>
             <div className="hidden md:flex gap-4">
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 uppercase tracking-tighter">
-                <span className="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></span> System Online
+              <button 
+                onClick={() => setActiveTab('tv')}
+                className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-emerald-600 transition-colors shadow-lg shadow-slate-200"
+              >
+                <Tv className="w-4 h-4" />
+                TV Mode
+              </button>
+              <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter ${isOffline ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                <span className={`w-2 h-2 rounded-full mr-2 ${isOffline ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse'}`}></span> 
+                {isOffline ? 'Mode Hors-ligne' : 'Système en ligne'}
               </span>
             </div>
           </div>
@@ -116,7 +274,7 @@ export default function App() {
                   <div>
                     <label className="block text-[10px] font-black text-slate-700 mb-2 uppercase tracking-wider">Select Region</label>
                     <div className="grid grid-cols-1 gap-1.5 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                      {cities.map((city) => (
+                      {SENEGAL_CITIES.map((city) => (
                         <button
                           key={city.name}
                           onClick={() => setSelectedCity(city)}
@@ -195,7 +353,7 @@ export default function App() {
                             <div>
                               <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{prayer.label.split(' ')[0]}</p>
                               <p className="text-xl font-black text-slate-800 font-mono">
-                                {loading ? '...' : (prayerTimes?.readable as any)?.[prayer.key]}
+                                {(prayerTimes?.readable as any)?.[prayer.key]}
                               </p>
                             </div>
                           </div>
