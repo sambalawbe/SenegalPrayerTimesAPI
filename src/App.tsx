@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Clock, MapPin, Code, Download, ExternalLink, Moon, Sun, Info, ChevronRight, Globe, Tv, X, Wifi, WifiOff } from 'lucide-react';
+import { Clock, MapPin, Code, Download, ExternalLink, Moon, Sun, Info, ChevronRight, Globe, Tv, X, Wifi, WifiOff, Smartphone, VolumeX } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { format, addSeconds, differenceInSeconds } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -39,6 +39,8 @@ export default function App() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [weather, setWeather] = useState<Weather | null>(null);
+  const [showPrayerNotification, setShowPrayerNotification] = useState(false);
+  const [lastNotifiedPrayer, setLastNotifiedPrayer] = useState<string | null>(null);
 
   useEffect(() => {
     const handleOnline = () => setIsOffline(false);
@@ -68,6 +70,43 @@ export default function App() {
     };
   }, []);
 
+  // Prayer Awareness Logic (Sound + Popup)
+  useEffect(() => {
+    if (!prayerTimes) return;
+
+    const now = currentTime;
+    const items = prayerNames.map(p => ({
+      ...p,
+      time: new Date((prayerTimes as any)[p.key])
+    }));
+
+    // Find if we are currently in a prayer window (e.g., first 20 mins of a prayer)
+    const active = items.find(p => {
+      // Don't show for sunrise
+      if (p.key === 'sunrise') return false;
+      const prayerTime = p.time;
+      const windowEnd = addSeconds(prayerTime, 2 * 60); // 2 minutes window
+      return now >= prayerTime && now <= windowEnd;
+    });
+
+    if (active) {
+      if (!showPrayerNotification) {
+        setShowPrayerNotification(true);
+      }
+      
+      // Play sound only once when the prayer starts
+      if (lastNotifiedPrayer !== active.key) {
+        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+        audio.play().catch(e => console.log('Audio play failed:', e));
+        setLastNotifiedPrayer(active.key);
+      }
+    } else {
+      if (showPrayerNotification) {
+        setShowPrayerNotification(false);
+      }
+    }
+  }, [currentTime, prayerTimes, showPrayerNotification, lastNotifiedPrayer]);
+
   useEffect(() => {
     if (selectedCity) {
       // Calculate locally (Instant & Offline support)
@@ -91,12 +130,12 @@ export default function App() {
   }, [selectedCity]);
 
   const prayerNames = [
-    { key: 'fajr', label: 'Fajar', subLabel: 'Fajr', icon: <Sun className="w-5 h-5 text-amber-500" /> },
-    { key: 'sunrise', label: 'Fenk', subLabel: 'Sunrise', icon: <Sun className="w-5 h-5 text-orange-400" /> },
-    { key: 'dhuhr', label: 'Tisbaar', subLabel: 'Dhuhr', icon: <Sun className="w-5 h-5 text-yellow-500" /> },
-    { key: 'asr', label: 'Tàkkusaan', subLabel: 'Asr', icon: <Sun className="w-5 h-5 text-orange-500" /> },
-    { key: 'maghrib', label: 'Timis', subLabel: 'Maghrib', icon: <Moon className="w-5 h-5 text-indigo-400" /> },
-    { key: 'isha', label: 'Gee', subLabel: 'Isha', icon: <Moon className="w-5 h-5 text-indigo-600" /> },
+    { key: 'fajr', label: 'Fajar', subLabel: 'الفجر', icon: <Sun className="w-5 h-5 text-amber-500" /> },
+    { key: 'sunrise', label: 'Fenk', subLabel: 'الشروق', icon: <Sun className="w-5 h-5 text-orange-400" /> },
+    { key: 'dhuhr', label: 'Tisbaar', subLabel: 'الظهر', icon: <Sun className="w-5 h-5 text-yellow-500" /> },
+    { key: 'asr', label: 'Tàkkusaan', subLabel: 'العصر', icon: <Sun className="w-5 h-5 text-orange-500" /> },
+    { key: 'maghrib', label: 'Timis', subLabel: 'المغرب', icon: <Moon className="w-5 h-5 text-indigo-400" /> },
+    { key: 'isha', label: 'Gee', subLabel: 'العشاء', icon: <Moon className="w-5 h-5 text-indigo-600" /> },
   ];
 
   const nextPrayer = useMemo(() => {
@@ -133,13 +172,20 @@ export default function App() {
     return (
       <div className="fixed inset-0 bg-slate-950 text-white z-[100] flex flex-col font-sans overflow-hidden">
         {/* TV Background */}
-        <div className="absolute inset-0 opacity-20 pointer-events-none">
+        <div className="absolute inset-0 opacity-30 pointer-events-none">
            <img 
-             src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=2070" 
-             className="w-full h-full object-cover grayscale" 
+             src="https://images.unsplash.com/photo-1519810755548-39cd217da494?auto=format&fit=crop&q=80&w=2070" 
+             className="w-full h-full object-cover grayscale brightness-50" 
              alt="Mosque background"
            />
-           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950" />
+           {/* Islamic Pattern Overlay */}
+           <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay" 
+             style={{ 
+               backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l15 15-15 15-15-15L30 0zm0 60l15-15-15-15-15 15 15 15zM0 30l15-15 15 15-15 15L0 30zm60 0l-15-15-15 15 15 15 15-15z' fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")`,
+               backgroundSize: '80px 80px'
+             }} 
+           />
+           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-slate-950" />
         </div>
 
         {/* Top Header TV */}
@@ -149,6 +195,7 @@ export default function App() {
               <Clock className="w-10 h-10" />
             </div>
             <div>
+              <div className="text-emerald-500/60 font-serif italic text-sm mb-1 tracking-widest">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
               <h1 className="text-3xl font-black tracking-tighter uppercase">{selectedCity?.name}</h1>
               <p className="text-lg font-bold text-emerald-500 uppercase tracking-widest mt-0.5 opacity-80">Sénégal • Bousso Method</p>
             </div>
@@ -181,10 +228,13 @@ export default function App() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-center"
               >
-                <div className="flex items-center justify-center gap-6 mb-2">
-                  <div className="h-px bg-emerald-500/30 w-24"></div>
-                  <p className="text-lg md:text-xl font-black text-emerald-400 uppercase tracking-[0.4em] opacity-90">PROCHAINE PRIÈRE : {nextPrayer.label}</p>
-                  <div className="h-px bg-emerald-500/30 w-24"></div>
+                <div className="flex items-center justify-center gap-6 mb-4">
+                  <div className="h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent w-32"></div>
+                  <div className="flex flex-col items-center">
+                    <p className="text-lg md:text-xl font-black text-emerald-400 uppercase tracking-[0.4em] opacity-90">PROCHAINE PRIÈRE</p>
+                    <p className="text-3xl font-black text-white mt-1 uppercase tracking-widest">{nextPrayer.label}</p>
+                  </div>
+                  <div className="h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent w-32"></div>
                 </div>
                 <div className="text-[12vw] md:text-[9rem] font-black tabular-nums tracking-[-0.05em] leading-none drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
                   {nextPrayer.countdown}
@@ -235,12 +285,64 @@ export default function App() {
         >
           <X className="w-8 h-8" />
         </button>
+
+        {/* Prayer In Progress Popup */}
+        <AnimatePresence>
+          {showPrayerNotification && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8, y: 50 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 50 }}
+              className="absolute inset-0 z-[200] flex items-center justify-center bg-slate-950/90 backdrop-blur-xl"
+            >
+              <div className="max-w-3xl w-full p-12 bg-emerald-600 rounded-[3rem] shadow-[0_0_100px_rgba(16,185,129,0.4)] border border-emerald-400/50 text-center relative overflow-hidden group">
+                {/* Decorative background pulse */}
+                <div className="absolute inset-0 bg-white/5 animate-pulse" />
+                
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="text-white/40 font-serif italic text-xl mb-6">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+                  
+                  <div className="w-36 h-36 bg-white/20 rounded-full flex items-center justify-center mb-8 relative">
+                    <Moon className="w-16 h-16 text-white animate-[pulse_3s_infinite]" />
+                    <Smartphone className="w-10 h-10 text-white absolute bottom-0 right-0 bg-red-500 rounded-full p-2 border-4 border-emerald-600 animate-bounce" />
+                  </div>
+                  
+                  <h2 className="text-6xl font-black text-white uppercase tracking-tighter mb-6 leading-tight">
+                    Prière en Cours
+                  </h2>
+                  
+                  <div className="space-y-4">
+                    <p className="text-2xl font-bold text-white/90 uppercase tracking-[0.2em] bg-white/10 py-3 px-8 rounded-full inline-block">
+                      Merci de mettre vos téléphones
+                    </p>
+                    <p className="text-4xl font-black text-white uppercase tracking-widest block">
+                      SOUS SILENCE
+                    </p>
+                  </div>
+
+                  <div className="mt-12 flex gap-4 items-center justify-center">
+                    <div className="w-2 h-2 bg-white rounded-full animate-ping" />
+                    <div className="w-2 h-2 bg-white rounded-full animate-ping [animation-delay:0.2s]" />
+                    <div className="w-2 h-2 bg-white rounded-full animate-ping [animation-delay:0.4s]" />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-900 relative">
+      {/* Background Decor */}
+      <div className="fixed inset-0 opacity-[0.02] pointer-events-none" 
+        style={{ 
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l15 15-15 15-15-15L30 0zm0 60l15-15-15-15-15 15 15 15zM0 30l15-15 15 15-15 15L0 30zm60 0l-15-15-15 15 15 15 15-15z' fill='%23059669' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")`,
+          backgroundSize: '120px 120px'
+        }} 
+      />
       {/* Header */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -249,6 +351,7 @@ export default function App() {
               <Clock className="w-6 h-6" />
             </div>
             <div>
+              <div className="text-[8px] text-emerald-600 font-serif italic tracking-widest leading-none mb-0.5">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
               <h1 className="font-bold text-xl tracking-tight text-slate-800">Senegal Prayer API</h1>
               <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold -mt-1">Methode: Serigne Mbacke Bousso</p>
             </div>
