@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%">
+  <!-- Base Background with an elegant emerald gradient -->
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE047" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="128" height="128" rx="36" fill="url(#bgGrad)" />
+  
+  <!-- Beautiful Mosque Dome Silhouette -->
+  <path d="M64 36 C52 50 50 64 50 78 L78 78 C78 64 76 50 64 36 Z" fill="#ffffff" opacity="0.15" />
+  
+  <!-- Large Golden Crescent Moon -->
+  <path d="M78 86 C55.9 86 38 68.1 38 46 C38 37.8 40.5 30.1 44.8 23.8 C31.6 28.5 22 41.1 22 56 C22 75.9 38.1 92 58 92 C72.9 92 85.5 82.4 90.2 69.2 C83.9 73.5 76.2 76 68 76 C65.5 76 63 75.8 60.5 75.3 C65.8 82.1 73.5 86 78 86 Z" fill="url(#goldGrad)" transform="translate(6, 6)" />
+  
+  <!-- Star / Clock representing prayer times -->
+  <!-- Clock Hands (golden) -->
+  <circle cx="64" cy="64" r="22" stroke="url(#goldGrad)" stroke-width="2.5" fill="none" opacity="0.8" />
+  <!-- Clock ticks or points for the 5 prayers -->
+  <circle cx="64" cy="42" r="2.5" fill="#ffffff" />
+  <circle cx="86" cy="64" r="2.5" fill="#ffffff" />
+  <circle cx="64" cy="86" r="2.5" fill="#ffffff" />
+  <circle cx="42" cy="64" r="2.5" fill="#ffffff" />
+  
+  <!-- Elegant central clock hands representing prayer time -->
+  <line x1="64" y1="64" x2="64" y2="48" stroke="url(#goldGrad)" stroke-width="3" stroke-linecap="round" />
+  <line x1="64" y1="64" x2="74" y2="64" stroke="url(#goldGrad)" stroke-width="3" stroke-linecap="round" />
+  <circle cx="64" cy="64" r="3.5" fill="#ffffff" />
+</svg>
