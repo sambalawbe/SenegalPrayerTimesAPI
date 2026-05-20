@@ -5,6 +5,7 @@ import { format, addSeconds, differenceInSeconds } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { SENEGAL_CITIES, City, DAILY_VERSES, Verse } from './lib/constants';
 import { calculatePrayerTimes } from './lib/prayerUtils';
+import daaruImage from './images/daaru.jpg';
 
 interface PrayerTimes {
   fajr: string;
@@ -179,8 +180,8 @@ export default function App() {
         {/* TV Background */}
         <div className="absolute inset-0 opacity-30 pointer-events-none">
            <img 
-             src="https://images.unsplash.com/photo-1519810755548-39cd217da494?auto=format&fit=crop&q=80&w=2070" 
-             className="w-full h-full object-cover grayscale brightness-50" 
+             src={daaruImage} 
+             className="w-full h-full object-cover brightness-[0.4]" 
              alt="Mosque background"
            />
            {/* Islamic Pattern Overlay */}
