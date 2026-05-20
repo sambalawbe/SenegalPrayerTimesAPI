@@ -177,7 +177,7 @@ export default function App() {
 
   if (activeTab === 'tv') {
     return (
-      <div className="fixed inset-0 bg-slate-950 text-white z-[100] flex flex-col font-sans overflow-hidden">
+      <div className="fixed inset-0 bg-slate-950 text-white z-[100] flex flex-col font-sans overflow-y-auto lg:overflow-hidden">
         {/* TV Background */}
         <div className="absolute inset-0 opacity-30 pointer-events-none">
            <img 
@@ -196,54 +196,54 @@ export default function App() {
         </div>
 
         {/* Top Header TV */}
-        <div className="relative z-10 px-12 py-6 flex justify-between items-start">
-          <div className="flex items-center gap-6">
-            <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-emerald-900/50">
-              <Clock className="w-10 h-10" />
+        <div className="relative z-10 px-6 sm:px-12 pt-12 sm:pt-16 md:pt-8 pb-6 flex flex-col md:flex-row justify-between items-center md:items-start gap-6 md:gap-0 text-center md:text-left">
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-emerald-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-emerald-900/50 flex-shrink-0 animate-in fade-in zoom-in duration-500">
+              <Clock className="w-7 h-7 sm:w-10 sm:h-10" />
             </div>
             <div>
-              <div className="text-emerald-500/60 font-serif italic text-sm mb-1 tracking-widest">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
-              <h1 className="text-3xl font-black tracking-tighter uppercase">{selectedCity?.name}</h1>
-              <p className="text-lg font-bold text-emerald-500 uppercase tracking-widest mt-0.5 opacity-80">Sénégal • Bousso Method</p>
+              <div className="text-emerald-500/60 font-serif italic text-xs sm:text-sm mb-1 tracking-widest">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tighter uppercase">{selectedCity?.name}</h1>
+              <p className="text-xs sm:text-sm md:text-lg font-bold text-emerald-500 uppercase tracking-widest mt-0.5 opacity-80">Sénégal • Bousso Method</p>
             </div>
           </div>
-          <div className="flex flex-col items-end">
-            <div className="flex items-center gap-6 mb-1">
+          <div className="flex flex-col items-center md:items-end">
+            <div className="flex items-center gap-3 sm:gap-6 mb-1">
               {weather && (
-                <div className="flex items-center gap-2 px-4 py-1.5 bg-white/5 rounded-full border border-white/10">
-                  <Sun className="w-5 h-5 text-yellow-400" />
-                  <span className="text-2xl font-black tabular-nums">{weather.temp}°C</span>
+                <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 bg-white/5 rounded-full border border-white/10 backdrop-blur-sm">
+                  <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
+                  <span className="text-sm sm:text-2xl font-black font-mono tabular-nums">{weather.temp}°C</span>
                 </div>
               )}
-              <div className="text-6xl font-black tabular-nums tracking-tighter">
+              <div className="text-3xl sm:text-5xl md:text-6xl font-black font-mono tabular-nums tracking-tighter">
                 {format(currentTime, 'HH:mm:ss')}
               </div>
             </div>
-            <div className="text-xl font-bold text-slate-400 uppercase tracking-widest">
+            <div className="text-xs sm:text-sm md:text-xl font-bold text-slate-400 uppercase tracking-widest">
               {format(currentTime, 'EEEE dd MMMM yyyy', { locale: fr })}
             </div>
           </div>
         </div>
 
         {/* Middle Section: Next Prayer Countdown */}
-        <div className="relative z-10 flex-[1.5] flex flex-col items-center justify-center p-0">
+        <div className="relative z-10 py-6 md:py-0 flex-[1.5] flex flex-col items-center justify-center text-center px-4">
           <AnimatePresence mode="wait">
             {nextPrayer && (
               <motion.div 
                 key={nextPrayer.key}
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-center"
               >
-                <div className="flex items-center justify-center gap-6 mb-4">
-                  <div className="h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent w-32"></div>
+                <div className="flex items-center justify-center gap-2 sm:gap-6 mb-2 sm:mb-4">
+                  <div className="h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent w-8 sm:w-16 md:w-32"></div>
                   <div className="flex flex-col items-center">
-                    <p className="text-lg md:text-xl font-black text-emerald-400 uppercase tracking-[0.4em] opacity-90">PROCHAINE PRIÈRE</p>
-                    <p className="text-3xl font-black text-white mt-1 uppercase tracking-widest">{nextPrayer.label}</p>
+                    <p className="text-[10px] xs:text-xs sm:text-base md:text-xl font-black text-emerald-400 uppercase tracking-[0.2em] md:tracking-[0.4em] opacity-90">PROCHAINE PRIÈRE</p>
+                    <p className="text-base sm:text-2xl md:text-3xl font-black text-white mt-0.5 sm:mt-1 uppercase tracking-widest">{nextPrayer.label}</p>
                   </div>
-                  <div className="h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent w-32"></div>
+                  <div className="h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent w-8 sm:w-16 md:w-32"></div>
                 </div>
-                <div className="text-[12vw] md:text-[9rem] font-black tabular-nums tracking-[-0.05em] leading-none drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                <div className="text-[12vw] xs:text-[14vw] sm:text-[10vw] md:text-[8rem] lg:text-[9rem] font-black font-mono tabular-nums tracking-[-0.05em] leading-none drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
                   {nextPrayer.countdown}
                 </div>
               </motion.div>
@@ -252,30 +252,30 @@ export default function App() {
         </div>
 
         {/* Bottom Section: Prayer List */}
-        <div className="relative z-10 px-8 pb-12">
-          <div className="grid grid-cols-6 gap-4">
+        <div className="relative z-10 px-4 sm:px-8 pb-6 sm:pb-12">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
             {prayerNames.map((prayer) => {
               const isNext = nextPrayer?.key === prayer.key;
               return (
                 <div 
                   key={prayer.key}
-                  className={`relative p-4 md:p-5 rounded-[1.2rem] border transition-all duration-500 flex flex-col items-center text-center gap-2 ${
+                  className={`relative p-3 sm:p-4 md:p-5 rounded-[1.2rem] border transition-all duration-500 flex flex-col items-center text-center gap-1.5 sm:gap-2 ${
                     isNext 
                       ? 'bg-emerald-600 border-emerald-300 shadow-2xl scale-105 z-20' 
                       : 'bg-white/5 border-white/5 opacity-70'
                   }`}
                 >
-                  <div className={`p-2.5 rounded-lg ${isNext ? 'bg-white/20' : 'bg-white/10'}`}>
+                  <div className={`p-1.5 sm:p-2 rounded-lg ${isNext ? 'bg-white/20' : 'bg-white/10'}`}>
                     {prayer.icon}
                   </div>
                   <div>
-                    <p className={`text-xs md:text-sm font-black uppercase tracking-widest mb-0.5 ${isNext ? 'text-white' : 'text-emerald-500'}`}>
+                    <p className={`text-[10px] sm:text-xs md:text-sm font-black uppercase tracking-widest mb-0.5 ${isNext ? 'text-white' : 'text-emerald-500'}`}>
                       {prayer.label}
                     </p>
-                    <p className={`text-[8px] md:text-[10px] font-bold uppercase tracking-widest mb-1 opacity-60 ${isNext ? 'text-white/70' : 'text-slate-500'}`}>
+                    <p className={`text-[8px] sm:text-[9px] md:text-[10px] font-bold uppercase tracking-widest mb-1 opacity-60 ${isNext ? 'text-white/70' : 'text-slate-500'}`}>
                       {prayer.subLabel}
                     </p>
-                    <p className={`text-2xl md:text-3xl font-black ${isNext ? 'text-white' : 'text-slate-200'}`}>
+                    <p className={`text-base sm:text-xl md:text-3xl font-black font-mono ${isNext ? 'text-white' : 'text-slate-200'}`}>
                       {(prayerTimes?.readable as any)?.[prayer.key]}
                     </p>
                   </div>
@@ -288,21 +288,21 @@ export default function App() {
         {/* Exit TV Mode Button */}
         <button 
           onClick={() => setActiveTab('dashboard')}
-          className="absolute top-8 left-1/2 -translate-x-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 text-white/80 hover:text-white border border-white/20 backdrop-blur-md rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-xl z-[60] cursor-pointer"
+          className="absolute top-4 right-4 sm:top-6 sm:right-6 md:top-8 md:left-1/2 md:-translate-x-1/2 md:right-auto w-10 h-10 sm:w-12 sm:h-12 bg-white/10 hover:bg-white/20 text-white/80 hover:text-white border border-white/20 backdrop-blur-md rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-xl z-[60] cursor-pointer"
           title="Quitter le mode TV"
         >
-          <X className="w-6 h-6" />
+          <X className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
 
         {/* Verse of the Day Marquee TV */}
-        <div className="relative z-10 bg-emerald-950/80 backdrop-blur-md border-t border-emerald-500/30 py-6 overflow-hidden mt-auto">
+        <div className="relative z-10 bg-emerald-950/80 backdrop-blur-md border-t border-emerald-500/30 py-3 sm:py-4 md:py-6 overflow-hidden mt-auto">
           <div className="flex w-max animate-marquee-tv text-emerald-100 pointer-events-none">
             {[1, 2].map((i) => (
-              <div key={i} className="flex items-center gap-32 px-16 whitespace-nowrap">
-                <span className="flex items-center gap-8">
-                  <span className="text-3xl font-serif">{verseOfTheDay.arabic}</span>
-                  <span className="text-lg font-medium opacity-80">— {verseOfTheDay.french}</span>
-                  <span className="text-sm font-black uppercase tracking-widest bg-emerald-500/20 px-4 py-1.5 rounded ml-4 border border-emerald-500/30">
+              <div key={i} className="flex items-center gap-12 sm:gap-24 md:gap-32 px-6 sm:px-12 md:px-16 whitespace-nowrap">
+                <span className="flex items-center gap-3 sm:gap-8">
+                  <span className="text-lg sm:text-2xl md:text-3xl font-serif">{verseOfTheDay.arabic}</span>
+                  <span className="text-[10px] sm:text-sm md:text-lg font-medium opacity-80">— {verseOfTheDay.french}</span>
+                  <span className="text-[8px] sm:text-xs md:text-sm font-black uppercase tracking-widest bg-emerald-500/20 px-2 sm:px-3 py-0.5 sm:py-1.5 rounded ml-2 sm:ml-4 border border-emerald-500/30">
                     {verseOfTheDay.reference}
                   </span>
                 </span>
@@ -320,32 +320,32 @@ export default function App() {
               exit={{ opacity: 0, scale: 0.8, y: 50 }}
               className="absolute inset-0 z-[200] flex items-center justify-center bg-slate-950/90 backdrop-blur-xl"
             >
-              <div className="max-w-3xl w-full p-12 bg-emerald-600 rounded-[3rem] shadow-[0_0_100px_rgba(16,185,129,0.4)] border border-emerald-400/50 text-center relative overflow-hidden group">
+              <div className="max-w-3xl w-[90%] md:w-full p-6 sm:p-10 md:p-12 bg-emerald-600 rounded-[2rem] md:rounded-[3rem] shadow-[0_0_100px_rgba(16,185,129,0.4)] border border-emerald-400/50 text-center relative overflow-hidden group">
                 {/* Decorative background pulse */}
                 <div className="absolute inset-0 bg-white/5 animate-pulse" />
                 
                 <div className="relative z-10 flex flex-col items-center">
-                  <div className="text-white/40 font-serif italic text-xl mb-6">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+                  <div className="text-white/40 font-serif italic text-base sm:text-xl mb-4 sm:mb-6">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
                   
-                  <div className="w-36 h-36 bg-white/20 rounded-full flex items-center justify-center mb-8 relative">
-                    <Moon className="w-16 h-16 text-white animate-[pulse_3s_infinite]" />
-                    <Smartphone className="w-10 h-10 text-white absolute bottom-0 right-0 bg-red-500 rounded-full p-2 border-4 border-emerald-600 animate-bounce" />
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 bg-white/20 rounded-full flex items-center justify-center mb-6 sm:mb-8 relative">
+                    <Moon className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 text-white animate-[pulse_3s_infinite]" />
+                    <Smartphone className="w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 text-white absolute bottom-0 right-0 bg-red-500 rounded-full p-1.5 md:p-2 border-2 sm:border-4 border-emerald-600 animate-bounce" />
                   </div>
                   
-                  <h2 className="text-6xl font-black text-white uppercase tracking-tighter mb-6 leading-tight">
+                  <h2 className="text-3xl sm:text-5xl md:text-6xl font-black text-white uppercase tracking-tighter mb-4 sm:mb-6 leading-tight">
                     Prière en Cours
                   </h2>
                   
-                  <div className="space-y-4">
-                    <p className="text-2xl font-bold text-white/90 uppercase tracking-[0.2em] bg-white/10 py-3 px-8 rounded-full inline-block">
+                  <div className="space-y-2 sm:space-y-4">
+                    <p className="text-sm sm:text-xl md:text-2xl font-bold text-white/90 uppercase tracking-[0.15em] sm:tracking-[0.2em] bg-white/10 py-2 sm:py-3 px-6 sm:px-8 rounded-full inline-block">
                       Merci de mettre vos téléphones
                     </p>
-                    <p className="text-4xl font-black text-white uppercase tracking-widest block">
+                    <p className="text-xl sm:text-3xl md:text-4xl font-black text-white uppercase tracking-widest block">
                       SOUS SILENCE
                     </p>
                   </div>
 
-                  <div className="mt-12 flex gap-4 items-center justify-center">
+                  <div className="mt-8 sm:mt-12 flex gap-3 sm:gap-4 items-center justify-center">
                     <div className="w-2 h-2 bg-white rounded-full animate-ping" />
                     <div className="w-2 h-2 bg-white rounded-full animate-ping [animation-delay:0.2s]" />
                     <div className="w-2 h-2 bg-white rounded-full animate-ping [animation-delay:0.4s]" />
