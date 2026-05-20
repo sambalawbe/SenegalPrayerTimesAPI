@@ -288,11 +288,10 @@ export default function App() {
         {/* Exit TV Mode Button */}
         <button 
           onClick={() => setActiveTab('dashboard')}
-          className="absolute top-8 left-1/2 -translate-x-1/2 px-5 py-2.5 bg-emerald-600/90 hover:bg-emerald-500 text-white rounded-full flex items-center gap-2 transition-all border border-emerald-400/30 shadow-lg shadow-emerald-950/50 hover:scale-105 active:scale-95 group z-[60] cursor-pointer"
+          className="absolute top-8 left-1/2 -translate-x-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 text-white/80 hover:text-white border border-white/20 backdrop-blur-md rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-xl z-[60] cursor-pointer"
           title="Quitter le mode TV"
         >
-          <X className="w-4 h-4" />
-          <span className="text-xs font-black uppercase tracking-wider">Quitter TV</span>
+          <X className="w-6 h-6" />
         </button>
 
         {/* Verse of the Day Marquee TV */}
