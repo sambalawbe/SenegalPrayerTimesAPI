@@ -42,6 +42,7 @@ export default function App() {
   const [weather, setWeather] = useState<Weather | null>(null);
   const [showPrayerNotification, setShowPrayerNotification] = useState(false);
   const [lastNotifiedPrayer, setLastNotifiedPrayer] = useState<string | null>(null);
+  const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
 
   useEffect(() => {
     const handleOnline = () => setIsOffline(false);
@@ -399,94 +400,177 @@ export default function App() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-10">
-        <div className="grid lg:grid-cols-12 gap-8">
-          {/* Sidebar: Region Selection */}
-          <div className="lg:col-span-4 space-y-6">
-            <section className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-              <h2 className="text-xs font-bold text-slate-400 hover:text-slate-500 uppercase mb-5 tracking-[0.2em]">Configuration de la Ville</h2>
-              <div className="space-y-5">
-                <div>
-                  <label className="block text-[10px] font-black text-slate-700 mb-2 uppercase tracking-wider">Sélectionner la Ville</label>
-                  <div className="grid grid-cols-1 gap-1.5 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                    {SENEGAL_CITIES.map((city) => (
-                      <button
-                        key={city.name}
-                        onClick={() => setSelectedCity(city)}
-                        className={`flex items-center justify-between px-4 py-2.5 rounded-lg text-sm transition-all border ${
-                          selectedCity?.name === city.name 
-                            ? 'bg-emerald-50 border-emerald-200 text-emerald-700 font-bold z-10' 
-                            : 'bg-white border-transparent text-slate-600 hover:bg-slate-50 hover:border-slate-200'
-                        }`}
-                      >
-                        <span>{city.name}</span>
-                        {selectedCity?.name === city.name && <ChevronRight className="w-4 h-4" />}
-                      </button>
-                    ))}
+      <main className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-10">
+        {/* Popular Cities Horizontal Scroll Selector */}
+        <div className="flex gap-2 overflow-x-auto pb-4 pt-1 px-1 -mx-4 md:mx-0 justify-start scrollbar-none snap-x snap-mandatory">
+          {SENEGAL_CITIES.filter(c => ['Dakar', 'Touba', 'Thiès', 'Kaolack', 'Saint-Louis', 'Mbour'].includes(c.name)).map(city => {
+            const isSelected = selectedCity?.name === city.name;
+            return (
+              <button
+                key={city.name}
+                onClick={() => setSelectedCity(city)}
+                className={`snap-center px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 flex-shrink-0 border cursor-pointer ${
+                  isSelected 
+                    ? 'bg-emerald-600 border-emerald-500 text-white shadow-lg shadow-emerald-600/30' 
+                    : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300'
+                }`}
+              >
+                {city.name}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Premium Next Prayer Hero Banner Card */}
+        {nextPrayer && (
+          <div className="bg-gradient-to-br from-emerald-600 to-teal-800 rounded-3xl p-6 md:p-8 text-white shadow-xl shadow-emerald-950/20 relative overflow-hidden mb-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            {/* Decorative background circle */}
+            <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
+              <Clock className="w-64 h-64" />
+            </div>
+
+            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-emerald-200 text-xs font-black uppercase tracking-widest">
+                  <div className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse" />
+                  Prochaine Prière
+                </div>
+                <h3 className="text-3xl font-black tracking-tight">{nextPrayer.label} • {nextPrayer.subLabel}</h3>
+                <p className="text-sm font-medium text-emerald-100 opacity-90">
+                  Heure de la prière : <span className="font-bold">{(prayerTimes?.readable as any)?.[nextPrayer.key]}</span>
+                </p>
+              </div>
+
+              <div className="flex flex-col md:items-end justify-center">
+                <span className="text-emerald-200 text-xs font-black uppercase tracking-widest mb-1">Compte à Rebours</span>
+                <div className="text-4xl md:text-5xl font-black tabular-nums tracking-tight font-mono drop-shadow-sm">
+                  {nextPrayer.countdown}
+                </div>
+                <div className="text-xs font-bold text-emerald-100 opacity-70 mt-1 uppercase tracking-wider">
+                  Heure actuelle : {format(currentTime, 'HH:mm:ss')}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={selectedCity?.name}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            className="space-y-6"
+          >
+            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                <Globe className="w-48 h-48" />
+              </div>
+
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center border border-emerald-100">
+                    <MapPin className="w-6 h-6 text-emerald-600" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">{selectedCity?.name}</h2>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Sénégal • Bousso Method</p>
                   </div>
                 </div>
-                <div>
-                  <label className="block text-[10px] font-black text-slate-700 mb-2 uppercase tracking-wider">Méthode de Calcul</label>
-                  <div className="p-3 bg-emerald-50 text-emerald-800 rounded-lg border border-emerald-200 text-xs font-bold flex items-center justify-between">
-                    <span>Serigne Mbacke Bousso (Touba)</span>
-                    <Info className="w-3.5 h-3.5" />
+                
+                <div className="flex items-center gap-3 flex-wrap">
+                  {/* Custom Dropdown Selector */}
+                  <div className="relative">
+                    <button 
+                      onClick={() => setIsCityDropdownOpen(!isCityDropdownOpen)}
+                      className="flex items-center gap-2 px-4 py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-800 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm active:scale-95 cursor-pointer"
+                    >
+                      <span>Changer de Ville</span>
+                      <ChevronRight className={`w-3.5 h-3.5 text-slate-500 transition-transform ${isCityDropdownOpen ? 'rotate-90' : ''}`} />
+                    </button>
+                    {isCityDropdownOpen && (
+                      <>
+                        <div className="fixed inset-0 z-40" onClick={() => setIsCityDropdownOpen(false)} />
+                        <div className="absolute right-0 mt-2 w-56 max-h-[300px] overflow-y-auto bg-white border border-slate-200 rounded-2xl shadow-xl z-50 p-2 custom-scrollbar animate-in fade-in slide-in-from-top-2 duration-200">
+                          {SENEGAL_CITIES.map((city) => (
+                            <button
+                              key={city.name}
+                              onClick={() => {
+                                setSelectedCity(city);
+                                setIsCityDropdownOpen(false);
+                              }}
+                              className={`w-full text-left px-4 py-2.5 rounded-xl text-sm transition-all flex items-center justify-between cursor-pointer ${
+                                selectedCity?.name === city.name 
+                                  ? 'bg-emerald-50 text-emerald-700 font-bold' 
+                                  : 'hover:bg-slate-50 text-slate-600'
+                              }`}
+                            >
+                              <span>{city.name}</span>
+                              {selectedCity?.name === city.name && <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />}
+                            </button>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  <div className="bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-200 flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                      Dakar • {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                    </span>
                   </div>
                 </div>
               </div>
-            </section>
-          </div>
 
-          {/* Main Content: Prayer Times Dashboard */}
-          <div className="lg:col-span-8 space-y-6">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={selectedCity?.name}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-6"
-              >
-                <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-                    <Globe className="w-48 h-48" />
-                  </div>
-
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                    <div>
-                      <h2 className="text-2xl font-black text-slate-900 tracking-tight">{selectedCity?.name}</h2>
-                      <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Horaires de Prière</p>
-                    </div>
-                    <div className="bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Dakar, Sénégal • {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {prayerNames.map((prayer) => (
-                      <div 
-                        key={prayer.key}
-                        className="group bg-slate-50 hover:bg-white hover:shadow-lg hover:shadow-slate-200/50 transition-all duration-300 p-5 rounded-2xl border border-slate-100"
-                      >
-                        <div className="flex flex-col items-center text-center gap-3">
-                          <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
-                            {prayer.icon}
-                          </div>
-                          <div>
-                            <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-0.5">{prayer.label}</p>
-                            <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-1">{prayer.subLabel}</p>
-                            <p className="text-xl font-black text-slate-800 font-mono">
-                              {(prayerTimes?.readable as any)?.[prayer.key]}
-                            </p>
-                          </div>
-                        </div>
+              {/* Responsive Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                {prayerNames.map((prayer) => {
+                  const isNext = nextPrayer?.key === prayer.key;
+                  return (
+                    <div 
+                      key={prayer.key}
+                      className={`group transition-all duration-500 p-5 rounded-2xl border flex flex-col items-center text-center gap-3 relative overflow-hidden ${
+                        isNext 
+                          ? 'bg-white border-emerald-500 shadow-xl shadow-emerald-500/10 scale-[1.02] ring-2 ring-emerald-500/20 z-10' 
+                          : 'bg-slate-50 hover:bg-white hover:shadow-lg hover:shadow-slate-200/50 border-slate-100'
+                      }`}
+                    >
+                      {isNext && (
+                        <span className="absolute top-2 right-2 bg-emerald-500 text-white text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full animate-pulse">
+                          Suivant
+                        </span>
+                      )}
+                      <div className={`w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform ${
+                        isNext ? 'border border-emerald-100 text-emerald-600 scale-110' : ''
+                      }`}>
+                        {prayer.icon}
                       </div>
-                    ))}
-                  </div>
+                      <div>
+                        <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-0.5">{prayer.label}</p>
+                        <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-1">{prayer.subLabel}</p>
+                        <p className={`text-xl font-black font-mono ${isNext ? 'text-emerald-700' : 'text-slate-800'}`}>
+                          {(prayerTimes?.readable as any)?.[prayer.key]}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Custom Info Row */}
+              <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-bold text-slate-500">
+                <div className="flex items-center gap-2 bg-emerald-50 text-emerald-800 px-4 py-2 rounded-xl border border-emerald-100">
+                  <Info className="w-4 h-4 text-emerald-600" />
+                  <span>Méthode : Serigne Mbacke Bousso (Touba)</span>
                 </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
+                <div className="flex items-center gap-2 text-slate-400">
+                  <span>Calculs validés traditionnellement</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       <footer className="bg-white border-t border-slate-200 mt-auto">
