@@ -19,3 +19,47 @@ export const SENEGAL_CITIES: City[] = [
   { name: 'Kolda', lat: 12.8833, lng: -14.95 },
   { name: 'Matam', lat: 15.6559, lng: -13.2554 },
 ];
+
+export interface Verse {
+  arabic: string;
+  french: string;
+  reference: string;
+}
+
+export const DAILY_VERSES: Verse[] = [
+  {
+    arabic: "وَإِذَا سَأَلَكَ عِبَادِي عَنِّي فَإِنِّي قَرِيبٌ ۖ أُجِيبُ دَعْوَةَ الدَّاعِ إِذَا دَعَانِ",
+    french: "Et quand Mes serviteurs t'interrogent sur Moi.. alors Je suis tout proche : Je réponds à l'appel de celui qui Me prie quand il Me prie.",
+    reference: "Sourate Al-Baqarah - 2:186"
+  },
+  {
+    arabic: "إِنَّ مَعَ الْعُسْرِ يُسْرًا",
+    french: "A côté de la difficulté est, certes, une facilité !",
+    reference: "Sourate Ash-Sharh - 94:6"
+  },
+  {
+    arabic: "فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ",
+    french: "Souvenez-vous de Moi donc, Je vous récompenserai. Remerciez-Moi et ne soyez pas ingrats envers Moi.",
+    reference: "Sourate Al-Baqarah - 2:152"
+  },
+  {
+    arabic: "وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا وَيَرْزُقْهُ مِنْ حَيْثُ لَا يَحْتَسِبُ",
+    french: "Et quiconque craint Allah, Il lui donnera une issue favorable, et lui accordera ses dons par [des moyens] sur lesquels il ne comptait pas.",
+    reference: "Sourate At-Talaq - 65:2-3"
+  },
+  {
+    arabic: "رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا وَهَبْ لَنَا مِن لَّدُنكَ رَحْمَةً",
+    french: "Seigneur ! Ne laisse pas dévier nos cœurs après que Tu nous as guidés ; et accorde-nous Ta miséricorde.",
+    reference: "Sourate Al-Imran - 3:8"
+  },
+  {
+    arabic: "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ",
+    french: "Certes, Allah est avec les endurants.",
+    reference: "Sourate Al-Baqarah - 2:153"
+  },
+  {
+    arabic: "قُلِ اللَّهُمَّ مَالِكَ الْمُلْكِ تُؤْتِي الْمُلْكَ مَن تَشَاءُ",
+    french: "Dis : « Ô Allah, Maître du Pouvoir Suprême ! Tu donnes le pouvoir à qui Tu veux... »",
+    reference: "Sourate Al-Imran - 3:26"
+  }
+];

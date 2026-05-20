@@ -3,7 +3,7 @@ import { Clock, MapPin, Code, Download, ExternalLink, Moon, Sun, Info, ChevronRi
 import { motion, AnimatePresence } from 'motion/react';
 import { format, addSeconds, differenceInSeconds } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { SENEGAL_CITIES, City } from './lib/constants';
+import { SENEGAL_CITIES, City, DAILY_VERSES, Verse } from './lib/constants';
 import { calculatePrayerTimes } from './lib/prayerUtils';
 
 interface PrayerTimes {
@@ -128,6 +128,11 @@ export default function App() {
         .catch(() => setWeather(null));
     }
   }, [selectedCity]);
+
+  const verseOfTheDay = useMemo(() => {
+    const day = new Date().getDate();
+    return DAILY_VERSES[day % DAILY_VERSES.length];
+  }, []);
 
   const prayerNames = [
     { key: 'fajr', label: 'Fajar', subLabel: 'الفجر', icon: <Sun className="w-5 h-5 text-amber-500" /> },
@@ -281,10 +286,28 @@ export default function App() {
         {/* Exit TV Mode Button */}
         <button 
           onClick={() => setActiveTab('demo')}
-          className="absolute bottom-8 right-8 w-14 h-14 bg-white/10 hover:bg-white text-white hover:text-slate-900 rounded-full flex items-center justify-center transition-all border border-white/10 shadow-lg group z-50"
+          className="absolute top-8 right-8 w-12 h-12 bg-white/10 hover:bg-white text-white hover:text-slate-900 rounded-full flex items-center justify-center transition-all border border-white/10 shadow-lg group z-[60]"
+          title="Quitter le mode TV"
         >
-          <X className="w-8 h-8" />
+          <X className="w-6 h-6" />
         </button>
+
+        {/* Verse of the Day Marquee TV */}
+        <div className="relative z-10 bg-emerald-950/80 backdrop-blur-md border-t border-emerald-500/30 py-6 overflow-hidden mt-auto">
+          <div className="flex w-max animate-marquee-tv text-emerald-100 pointer-events-none">
+            {[1, 2].map((i) => (
+              <div key={i} className="flex items-center gap-32 px-16 whitespace-nowrap">
+                <span className="flex items-center gap-8">
+                  <span className="text-3xl font-serif">{verseOfTheDay.arabic}</span>
+                  <span className="text-lg font-medium opacity-80">— {verseOfTheDay.french}</span>
+                  <span className="text-sm font-black uppercase tracking-widest bg-emerald-500/20 px-4 py-1.5 rounded ml-4 border border-emerald-500/30">
+                    {verseOfTheDay.reference}
+                  </span>
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* Prayer In Progress Popup */}
         <AnimatePresence>
@@ -615,7 +638,34 @@ export default function App() {
         </div>
       </footer>
 
+      {/* Verse of the Day Marquee Standard */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-emerald-600 text-white py-2 overflow-hidden shadow-[0_-4px_30px_rgba(5,150,105,0.3)]">
+        <div className="flex w-max animate-marquee-std">
+           {[1, 2].map((i) => (
+             <div key={i} className="flex items-center gap-16 px-8 whitespace-nowrap">
+                <span className="flex items-center gap-4">
+                  <span className="text-base font-serif">{verseOfTheDay.arabic}</span>
+                  <span className="text-[11px] font-bold opacity-90">{verseOfTheDay.french}</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest bg-black/20 px-2 py-0.5 rounded">{verseOfTheDay.reference}</span>
+                </span>
+             </div>
+           ))}
+        </div>
+      </div>
+
       <style>{`
+        @keyframes marquee {
+          0% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
+        }
+        .animate-marquee-tv {
+          animation: marquee 80s linear infinite;
+          will-change: transform;
+        }
+        .animate-marquee-std {
+          animation: marquee 50s linear infinite;
+          will-change: transform;
+        }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
