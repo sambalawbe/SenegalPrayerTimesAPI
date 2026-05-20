@@ -577,12 +577,30 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-3">
              <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">© 2026 SAMA JULLI • SOURCES: TANWÎRU-L-HAWÂLIK</p>
+             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 flex-wrap">
+               <span>© 2026 SAMA JULLI • SOURCES: TANWÎRU-L-HAWÂLIK</span>
+               <span>•</span>
+               <a 
+                 href="https://github.com/sambalawbe/SenegalPrayerTimesAPI" 
+                 target="_blank" 
+                 rel="noopener noreferrer" 
+                 className="hover:text-emerald-600 transition-colors inline-flex items-center gap-1 normal-case font-black"
+               >
+                 <Code className="w-3.5 h-3.5" /> Code Source
+               </a>
+             </p>
           </div>
-          <div className="flex gap-8">
-            {['Support Technique', 'Termes', 'Contact'].map(link => (
-              <a key={link} href="#" className="text-[10px] font-black text-slate-400 hover:text-emerald-600 transition-colors uppercase tracking-widest">{link}</a>
-            ))}
+          <div className="flex gap-8 flex-wrap justify-center md:justify-end">
+            <a href="#" className="text-[10px] font-black text-slate-400 hover:text-emerald-600 transition-colors uppercase tracking-widest">Support Technique</a>
+            <a href="#" className="text-[10px] font-black text-slate-400 hover:text-emerald-600 transition-colors uppercase tracking-widest">Termes</a>
+            <a 
+              href="https://wa.me/221771329037" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-[10px] font-black text-slate-400 hover:text-emerald-600 transition-colors uppercase tracking-widest inline-flex items-center gap-1"
+            >
+              Contact
+            </a>
           </div>
         </div>
       </footer>
