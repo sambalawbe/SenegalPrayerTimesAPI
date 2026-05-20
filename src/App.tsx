@@ -493,7 +493,7 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-3">
              <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">© 2024 SAMA JULLI • SOURCES: TANWÎRU-L-HAWÂLIK</p>
+             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">© 2026 SAMA JULLI • SOURCES: TANWÎRU-L-HAWÂLIK</p>
           </div>
           <div className="flex gap-8">
             {['Support Technique', 'Termes', 'Contact'].map(link => (
