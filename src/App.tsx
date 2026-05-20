@@ -403,7 +403,7 @@ export default function App() {
       <main className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-10">
         {/* Popular Cities Horizontal Scroll Selector */}
         <div className="flex gap-2 overflow-x-auto pb-4 pt-1 px-1 -mx-4 md:mx-0 justify-start scrollbar-none snap-x snap-mandatory">
-          {SENEGAL_CITIES.filter(c => ['Dakar', 'Touba', 'Thiès', 'Kaolack', 'Saint-Louis', 'Mbour'].includes(c.name)).map(city => {
+          {SENEGAL_CITIES.filter(c => ['Dakar', 'Touba', 'Darou Salam Diass', 'Thiès', 'Kaolack', 'Saint-Louis', 'Mbour'].includes(c.name)).map(city => {
             const isSelected = selectedCity?.name === city.name;
             return (
               <button
