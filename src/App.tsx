@@ -6,6 +6,7 @@ import { fr } from 'date-fns/locale';
 import { SENEGAL_CITIES, City, DAILY_VERSES, Verse } from './lib/constants';
 import { calculatePrayerTimes } from './lib/prayerUtils';
 import daaruImage from './images/daaru.jpg';
+import azanSound from './sounds/azan.mp3';
 
 interface PrayerTimes {
   fajr: string;
@@ -98,7 +99,7 @@ export default function App() {
       
       // Play sound only once when the prayer starts
       if (lastNotifiedPrayer !== active.key) {
-        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+        const audio = new Audio(azanSound);
         audio.play().catch(e => console.log('Audio play failed:', e));
         setLastNotifiedPrayer(active.key);
       }
