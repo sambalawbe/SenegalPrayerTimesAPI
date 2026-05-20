@@ -653,27 +653,6 @@ export default function App() {
         </div>
       </div>
 
-      <style>{`
-        @keyframes marquee {
-          0% { transform: translate3d(0, 0, 0); }
-          100% { transform: translate3d(-50%, 0, 0); }
-        }
-        .animate-marquee-tv {
-          animation: marquee 80s linear infinite;
-          will-change: transform;
-        }
-        .animate-marquee-std {
-          animation: marquee 50s linear infinite;
-          will-change: transform;
-        }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-        
-        .custom-scrollbar-dark::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar-dark::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar-dark::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-      `}</style>
     </div>
   );
 }

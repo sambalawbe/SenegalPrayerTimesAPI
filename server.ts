@@ -5,7 +5,7 @@ import cors from 'cors';
 import { SENEGAL_CITIES } from './src/lib/constants';
 import { calculatePrayerTimes } from './src/lib/prayerUtils';
 
-const APP_PORT = process.env.PORT || 3000;
+const APP_PORT = Number(process.env.PORT || 3000);
 
 async function startServer() {
   const app = express();
